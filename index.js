@@ -1,6 +1,10 @@
 var path = require('path');
 var fs = require('fs');
 var builder = require('xmlbuilder');
+var helpers = require('./helpers/helpers');
+var newGuid = helpers.newGuid;
+var getTimeStamp = helpers.getTimestamp;
+var formatDuration = helpers.formatDuration;
 
 var TRXReporter = function (baseReporterDecorator, config, emitter, logger, helper, formatError) {
     var outputFile = config.outputFile;
@@ -15,40 +19,6 @@ var TRXReporter = function (baseReporterDecorator, config, emitter, logger, help
     var testEntries;
     var results;
     var times;
-
-    var getTimestamp = function () {
-        // todo: use local time ?
-        return (new Date()).toISOString().substr(0, 19);
-    }
-
-    var s4 = function () {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    };
-
-    var newGuid = function () {
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-    };
-
-    var formatDuration = function (duration) {
-        duration = duration | 0;
-        var ms = duration % 1000;
-        duration -= ms;
-        var s = (duration / 1000) % 60;
-        duration -= s * 1000;
-        var m = (duration / 60000) % 60;
-        duration -= m * 60000;
-        var h = (duration / 3600000) % 24;
-        duration -= h * 3600000;
-        var d = duration / 86400000;
-
-        return (d > 0 ? d + '.' : '') +
-            (h < 10 ? '0' + h : h) + ':' +
-            (m < 10 ? '0' + m : m) + ':' +
-            (s < 10 ? '0' + s : s) + '.' +
-            (ms < 10 ? '00' + ms : ms < 100 ? '0' + ms : ms);
-    };
 
     baseReporterDecorator(this);
 
@@ -134,8 +104,9 @@ var TRXReporter = function (baseReporterDecorator, config, emitter, logger, help
         var className = result.suite.join('.');
         var codeBase = className + '.' + unitTestName;
 
+        var suite = className = result.suite.join(' > ');
         var unitTest = testDefinitions.ele('UnitTest')
-            .att('name', unitTestName)
+            .att('name', suite + ' > ' + unitTestName)
             .att('id', unitTestId);
         var executionId = newGuid();
         unitTest.ele('Execution')
