@@ -97,15 +97,17 @@ var TRXReporter = function (baseReporterDecorator, config, emitter, logger, help
 
     this.specSuccess = this.specSkipped = this.specFailure = function (browser, result) {
         var unitTestId = newGuid();
-        var unitTestName = shortTestName
-            ? result.description
-            : browser.name + '_' + result.description;
-        var className = result.suite.join('.');
-        var codeBase = className + '.' + unitTestName;
-
         var suite = className = result.suite.join(' > ');
+        var unitTestName = shortTestName
+            ?  suite + ' > ' + result.description
+            : browser.name + ' - ' +  suite + ' > ' + result.description;
+        var className = result.suite.join('.');
+        var codeBase = className + '.' + result.description;
+        
+
+        
         var unitTest = testDefinitions.ele('UnitTest')
-            .att('name', suite + ' > ' + unitTestName)
+            .att('name', unitTestName)
             .att('id', unitTestId);
         var executionId = newGuid();
         unitTest.ele('Execution')
