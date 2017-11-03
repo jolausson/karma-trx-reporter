@@ -1,10 +1,9 @@
 var path = require('path');
 var fs = require('fs');
 var builder = require('xmlbuilder');
-var helpers = require('./helpers/helpers');
-var newGuid = helpers.newGuid;
-var getTimeStamp = helpers.getTimestamp;
-var formatDuration = helpers.formatDuration;
+var newGuid =  require('./helpers/helpers').newGuid;
+var getTimestamp = require('./helpers/helpers').getTimestamp;
+var formatDuration = require('./helpers/helpers').formatDuration;
 
 var TRXReporter = function (baseReporterDecorator, config, emitter, logger, helper, formatError) {
     var outputFile = config.outputFile;
